@@ -9,6 +9,8 @@ __version = "0.1"
 
 from __future__ import print_function, unicode_literals, division
 from sklearn import decomposition
+import matplotlib.pyplot as plt
+from chainer.datasets import mnist
 
 
 class PCA(object):
@@ -55,9 +57,36 @@ class SelfOrganizationMap(object):
 
 
 class Drawer(object):
-    def __init__(self):
-        pass
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+        self.fig = plt.figure()
+
+    def print(self, dataset):
+        """
+        :param data: [png, (point)]
+        :return:
+        """
+        for data in dataset:
+            img, pos = data
+            subfig = self.fig.add_subplot(self.height, self.width, 10 * pos[0] + pos[1] + 1)
+            subfig.get_xaxis().set_visible(False)
+            subfig.get_yaxis().set_visible(False)
+            plt.imshow(img)
+
+        plt.show()
 
 
 if __name__ == '__main__':
-    pass
+    dataset = mnist.get_mnist(withlabel=False, ndim=2)[0][:10000]
+
+    sample = dataset[:100]
+    sample_data = []
+
+    for i in range(10):
+        for j in range(10):
+            sample_data.append([sample[10 * i + j], (i, j)])
+
+    drawer = Drawer(10, 10)
+    drawer.print(sample_data)
